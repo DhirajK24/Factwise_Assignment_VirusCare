@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 210 20% 98%;
+  --foreground: 217 38% 15%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 217 38% 15%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 217 38% 15%;
+
+  --primary: 214 49% 15%; /* Navy #14243A */
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 210 20% 96%;
+  --secondary-foreground: 217 38% 15%;
+
+  --muted: 210 20% 96%;
+  --muted-foreground: 215 16% 47%;
+
+  --accent: 174 84% 32%; /* Teal #0D9488 */
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214 24% 92%; /* Border #E5EAF0 */
+  --input: 214 24% 90%;
+  --ring: 174 84% 32%;
+
+  --radius: 0.625rem;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11", "tnum";
+}
+
+/* Tabular figures for statistics and numbers */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Smooth subtle transitions */
+button, a {
+  transition: all 0.15s ease-out;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
