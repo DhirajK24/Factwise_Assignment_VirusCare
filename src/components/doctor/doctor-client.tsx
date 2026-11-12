@@ -353,3 +353,4 @@ export function DoctorClient({ initialData }: DoctorClientProps) {
     </div>
   );
 }
+

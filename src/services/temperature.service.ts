@@ -201,7 +201,7 @@ export async function getPatientTemperatureHistory(
     return (raw || []) as TemperatureReading[];
   }
 
-  return (data || []).map((r: any) => {
+  return (data || []).map((r) => {
     const rec = r.recorder as { full_name?: string } | null;
     return {
       ...r,
@@ -235,7 +235,7 @@ export async function getTodaysNurseMonitoringList(dateStr?: string) {
     .eq("reading_date", targetDate);
 
   const readingsMap = new Map<string, TemperatureReading>();
-  (todaysReadings || []).forEach((r: any) => {
+  (todaysReadings || []).forEach((r) => {
     const rec = r.recorder as { full_name?: string } | null;
     readingsMap.set(r.patient_id, {
       ...r,
@@ -253,7 +253,7 @@ export async function getTodaysNurseMonitoringList(dateStr?: string) {
 
   const threshold = settings?.fever_threshold_celsius ?? 37.5;
 
-  const list = activePatients.map((p: any) => {
+  const list = activePatients.map((p) => {
     const reading = readingsMap.get(p.id);
     const hasReading = !!reading;
     const temp = reading ? Number(reading.temperature_celsius) : null;
@@ -269,9 +269,9 @@ export async function getTodaysNurseMonitoringList(dateStr?: string) {
     };
   });
 
-  const completedCount = list.filter((item: any) => item.isCompleted).length;
+  const completedCount = list.filter((item) => item.isCompleted).length;
   const pendingCount = list.length - completedCount;
-  const feverCount = list.filter((item: any) => item.isFever).length;
+  const feverCount = list.filter((item) => item.isFever).length;
 
   return {
     targetDate,
@@ -283,3 +283,4 @@ export async function getTodaysNurseMonitoringList(dateStr?: string) {
     items: list,
   };
 }
+

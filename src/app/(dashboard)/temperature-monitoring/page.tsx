@@ -9,3 +9,4 @@ export default async function TemperatureMonitoringPage() {
 
   return <NurseClient initialData={monitoringData} />;
 }
+

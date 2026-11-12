@@ -251,3 +251,4 @@ export function RecordVisitModal({
     </Dialog>
   );
 }
+

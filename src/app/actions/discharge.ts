@@ -74,3 +74,4 @@ export async function markPatientDeceasedAction(patientId: string, notes: string
     };
   }
 }
+

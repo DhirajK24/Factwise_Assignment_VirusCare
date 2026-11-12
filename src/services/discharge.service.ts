@@ -42,7 +42,7 @@ export async function evaluatePatientEligibility(
   }
 
   const readingsMap = new Map<string, TemperatureReading>();
-  (readings || []).forEach((r: any) => {
+  (readings || []).forEach((r) => {
     readingsMap.set(r.reading_date, r as TemperatureReading);
   });
 
@@ -281,3 +281,4 @@ export async function syncAllActivePatientsEligibility(): Promise<void> {
     }
   }
 }
+

@@ -51,3 +51,4 @@ test.describe("VirusCare SaaS Critical Workflows", () => {
     await expect(page.getByText("Treatment Success Rate")).toBeVisible();
   });
 });
+

@@ -193,3 +193,4 @@ VALUES
     ('22222222-2222-2222-2222-222222222222', 'TEMPERATURE_RECORDED', 'temperature_readings', 'a0000000-0000-0000-0000-000000000001', '{"temperature_celsius": 38.6, "reading_date": "2026-11-12"}', now() - interval '2 hours'),
     ('44444444-4444-4444-4444-444444444444', 'DOCTOR_VISIT_RECORDED', 'doctor_visits', 'a0000000-0000-0000-0000-000000000001', '{"doctor": "Dr. Arjun Mehta", "notes": "Patient remains febrile at 38.6°C"}', now() - interval '1 hours'),
     ('11111111-1111-1111-1111-111111111111', 'PATIENT_DISCHARGED', 'patients', 'a0000000-0000-0000-0000-000000000006', '{"patient_code": "VC-2026-0006", "outcome": "recovered", "bed_freed": 6}', now() - interval '2 days');
+

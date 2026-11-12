@@ -25,3 +25,4 @@ export default async function DischargePage() {
 
   return <DischargeClient candidates={candidates} feverThreshold={threshold} />;
 }
+

@@ -63,3 +63,4 @@ export async function updatePatientAction(patientId: string, data: unknown) {
     };
   }
 }
+

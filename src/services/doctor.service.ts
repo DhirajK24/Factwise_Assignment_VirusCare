@@ -120,7 +120,7 @@ export async function getPatientVisits(patientId: string): Promise<DoctorVisit[]
     return (raw || []) as DoctorVisit[];
   }
 
-  return (data || []).map((v: any) => {
+  return (data || []).map((v) => {
     const doc = v.doctor as { full_name?: string } | null;
     return {
       ...v,
@@ -143,7 +143,6 @@ export async function getTodaysDoctorRoster(dateStr?: string) {
   if (!activePatients) {
     return {
       targetDate,
-      threshold: 37.5,
       totalActive: 0,
       completedVisits: 0,
       pendingVisits: 0,
@@ -158,7 +157,7 @@ export async function getTodaysDoctorRoster(dateStr?: string) {
     .eq("reading_date", targetDate);
 
   const readingsMap = new Map<string, number>();
-  (todaysReadings || []).forEach((r: any) => {
+  (todaysReadings || []).forEach((r) => {
     readingsMap.set(r.patient_id, Number(r.temperature_celsius));
   });
 
@@ -172,7 +171,7 @@ export async function getTodaysDoctorRoster(dateStr?: string) {
     .eq("visit_date", targetDate);
 
   const visitsMap = new Map<string, DoctorVisit>();
-  (todaysVisits || []).forEach((v: any) => {
+  (todaysVisits || []).forEach((v) => {
     const doc = v.doctor as { full_name?: string } | null;
     visitsMap.set(v.patient_id, {
       ...v,
@@ -190,7 +189,7 @@ export async function getTodaysDoctorRoster(dateStr?: string) {
 
   const threshold = settings?.fever_threshold_celsius ?? 37.5;
 
-  const items = activePatients.map((p: any) => {
+  const items = activePatients.map((p) => {
     const todayTemp = readingsMap.get(p.id);
     const hasNurseReading = todayTemp !== undefined;
     const isFever = hasNurseReading && todayTemp >= threshold;
@@ -208,7 +207,7 @@ export async function getTodaysDoctorRoster(dateStr?: string) {
     };
   });
 
-  const completedVisits = items.filter((i: any) => i.isVisitCompleted).length;
+  const completedVisits = items.filter((i) => i.isVisitCompleted).length;
   const pendingVisits = items.length - completedVisits;
 
   return {
@@ -220,3 +219,4 @@ export async function getTodaysDoctorRoster(dateStr?: string) {
     patients: items,
   };
 }
+

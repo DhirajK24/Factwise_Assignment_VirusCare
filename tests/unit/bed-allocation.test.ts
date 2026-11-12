@@ -90,3 +90,4 @@ describe("Bed Allocation & Facility Capacity Enforcement", () => {
     ).rejects.toThrow(/FACILITY_CAPACITY_REACHED/);
   });
 });
+

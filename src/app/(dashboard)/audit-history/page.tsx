@@ -9,3 +9,4 @@ export default async function AuditHistoryPage() {
 
   return <AuditClient logs={logs} totalCount={totalCount} />;
 }
+

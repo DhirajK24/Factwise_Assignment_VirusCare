@@ -134,3 +134,4 @@ export interface BedStatus {
   currentTemp?: number | null;
   isFever?: boolean;
 }
+

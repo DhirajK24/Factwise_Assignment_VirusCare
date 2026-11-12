@@ -221,3 +221,4 @@ export function AuditClient({ logs, totalCount }: AuditClientProps) {
     </div>
   );
 }
+

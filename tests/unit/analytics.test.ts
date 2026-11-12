@@ -54,3 +54,4 @@ describe("Mortality and Treatment Analytics Service", () => {
     expect(analytics.occupiedBeds + analytics.availableBeds).toBe(74);
   });
 });
+

@@ -44,3 +44,4 @@ describe("Role-Based Access Control (RBAC) & Authorization Guards", () => {
     expect(settings.maximum_capacity).toBeGreaterThanOrEqual(activePatientsCount);
   });
 });
+

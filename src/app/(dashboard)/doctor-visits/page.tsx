@@ -9,3 +9,4 @@ export default async function DoctorVisitsPage() {
 
   return <DoctorClient initialData={rosterData} />;
 }
+

@@ -308,12 +308,12 @@ export async function getFacilityBedsMap(): Promise<{
     .eq("reading_date", todayStr);
 
   const readingMap = new Map<string, number>();
-  (todaysReadings || []).forEach((r: any) => {
+  (todaysReadings || []).forEach((r) => {
     readingMap.set(r.patient_id, Number(r.temperature_celsius));
   });
 
   const patientMap = new Map<number, Patient>();
-  (activePatients || []).forEach((p: any) => {
+  (activePatients || []).forEach((p) => {
     patientMap.set(p.bed_number, p as Patient);
   });
 
@@ -344,3 +344,4 @@ export async function getFacilityBedsMap(): Promise<{
     maxCapacity,
   };
 }
+

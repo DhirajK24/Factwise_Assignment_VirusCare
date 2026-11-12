@@ -147,3 +147,4 @@ export function BedMap({ beds, onSelectBed }: BedMapProps) {
     </div>
   );
 }
+

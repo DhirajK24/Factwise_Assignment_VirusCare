@@ -145,3 +145,4 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
     </div>
   );
 }
+

@@ -216,3 +216,4 @@ export async function updateUserProfile(
 
   return updated as UserProfile;
 }
+

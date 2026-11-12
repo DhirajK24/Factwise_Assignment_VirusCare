@@ -38,3 +38,10 @@ next-env.d.ts
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Agent & local tooling
+.agents/
+.codex/
+.impeccable/
+skills-lock.json
+

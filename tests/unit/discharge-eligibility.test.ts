@@ -77,3 +77,4 @@ describe("Discharge Eligibility Engine", () => {
     await expect(dischargePatient(patientId, adminId)).rejects.toThrow(/DISCHARGE_REJECTED/);
   });
 });
+
