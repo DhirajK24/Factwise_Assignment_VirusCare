@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { DoctorVisit } from "@/types";
+import { DoctorVisit, DoctorRosterData, DoctorRosterItem, Patient } from "@/types";
 import { logAuditEvent } from "./audit.service";
 import { format } from "date-fns";
 
@@ -120,18 +120,28 @@ export async function getPatientVisits(patientId: string): Promise<DoctorVisit[]
     return (raw || []) as DoctorVisit[];
   }
 
-  return (data || []).map((v) => {
+  return ((data || []) as Record<string, unknown>[]).map((v: Record<string, unknown>) => {
     const doc = v.doctor as { full_name?: string } | null;
     return {
-      ...v,
+      ...(v as unknown as DoctorVisit),
       doctor_name: doc?.full_name || "Doctor Staff",
     };
   }) as DoctorVisit[];
 }
 
-export async function getTodaysDoctorRoster(dateStr?: string) {
+export async function getTodaysDoctorRoster(dateStr?: string): Promise<DoctorRosterData> {
   const supabase = createAdminClient();
   const targetDate = dateStr || format(new Date(), "yyyy-MM-dd");
+
+  // Fetch fever threshold first
+  const { data: settings } = await supabase
+    .from("facility_settings")
+    .select("fever_threshold_celsius")
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  const threshold = Number(settings?.fever_threshold_celsius ?? 37.5);
 
   // Fetch active patients
   const { data: activePatients } = await supabase
@@ -140,9 +150,10 @@ export async function getTodaysDoctorRoster(dateStr?: string) {
     .in("status", ["active", "discharge_eligible"])
     .order("bed_number", { ascending: true });
 
-  if (!activePatients) {
+  if (!activePatients || activePatients.length === 0) {
     return {
       targetDate,
+      threshold,
       totalActive: 0,
       completedVisits: 0,
       pendingVisits: 0,
@@ -157,8 +168,8 @@ export async function getTodaysDoctorRoster(dateStr?: string) {
     .eq("reading_date", targetDate);
 
   const readingsMap = new Map<string, number>();
-  (todaysReadings || []).forEach((r) => {
-    readingsMap.set(r.patient_id, Number(r.temperature_celsius));
+  ((todaysReadings || []) as Record<string, unknown>[]).forEach((r: Record<string, unknown>) => {
+    readingsMap.set(String(r.patient_id), Number(r.temperature_celsius));
   });
 
   // Fetch today's doctor visits
@@ -171,25 +182,15 @@ export async function getTodaysDoctorRoster(dateStr?: string) {
     .eq("visit_date", targetDate);
 
   const visitsMap = new Map<string, DoctorVisit>();
-  (todaysVisits || []).forEach((v) => {
+  ((todaysVisits || []) as Record<string, unknown>[]).forEach((v: Record<string, unknown>) => {
     const doc = v.doctor as { full_name?: string } | null;
-    visitsMap.set(v.patient_id, {
-      ...v,
+    visitsMap.set(String(v.patient_id), {
+      ...(v as unknown as DoctorVisit),
       doctor_name: doc?.full_name || "Physician",
-    } as DoctorVisit);
+    });
   });
 
-  // Fetch fever threshold
-  const { data: settings } = await supabase
-    .from("facility_settings")
-    .select("fever_threshold_celsius")
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .single();
-
-  const threshold = settings?.fever_threshold_celsius ?? 37.5;
-
-  const items = activePatients.map((p) => {
+  const items: DoctorRosterItem[] = (activePatients as Patient[]).map((p) => {
     const todayTemp = readingsMap.get(p.id);
     const hasNurseReading = todayTemp !== undefined;
     const isFever = hasNurseReading && todayTemp >= threshold;

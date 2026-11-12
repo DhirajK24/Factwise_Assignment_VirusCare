@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { TemperatureReading } from "@/types";
+import { TemperatureReading, Patient } from "@/types";
 import { logAuditEvent } from "./audit.service";
 import { evaluatePatientEligibility } from "./discharge.service";
 import { format } from "date-fns";
@@ -201,10 +201,10 @@ export async function getPatientTemperatureHistory(
     return (raw || []) as TemperatureReading[];
   }
 
-  return (data || []).map((r) => {
+  return ((data || []) as Record<string, unknown>[]).map((r: Record<string, unknown>) => {
     const rec = r.recorder as { full_name?: string } | null;
     return {
-      ...r,
+      ...(r as unknown as TemperatureReading),
       recorder_name: rec?.full_name || "Nurse Staff",
     };
   }) as TemperatureReading[];
@@ -235,12 +235,12 @@ export async function getTodaysNurseMonitoringList(dateStr?: string) {
     .eq("reading_date", targetDate);
 
   const readingsMap = new Map<string, TemperatureReading>();
-  (todaysReadings || []).forEach((r) => {
+  ((todaysReadings || []) as Record<string, unknown>[]).forEach((r: Record<string, unknown>) => {
     const rec = r.recorder as { full_name?: string } | null;
-    readingsMap.set(r.patient_id, {
-      ...r,
+    readingsMap.set(String(r.patient_id), {
+      ...(r as unknown as TemperatureReading),
       recorder_name: rec?.full_name || "Staff",
-    } as TemperatureReading);
+    });
   });
 
   // Get fever threshold
@@ -251,9 +251,9 @@ export async function getTodaysNurseMonitoringList(dateStr?: string) {
     .limit(1)
     .single();
 
-  const threshold = settings?.fever_threshold_celsius ?? 37.5;
+  const threshold = Number(settings?.fever_threshold_celsius ?? 37.5);
 
-  const list = activePatients.map((p) => {
+  const list = ((activePatients || []) as Patient[]).map((p: Patient) => {
     const reading = readingsMap.get(p.id);
     const hasReading = !!reading;
     const temp = reading ? Number(reading.temperature_celsius) : null;

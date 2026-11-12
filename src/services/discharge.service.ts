@@ -42,8 +42,8 @@ export async function evaluatePatientEligibility(
   }
 
   const readingsMap = new Map<string, TemperatureReading>();
-  (readings || []).forEach((r) => {
-    readingsMap.set(r.reading_date, r as TemperatureReading);
+  ((readings || []) as TemperatureReading[]).forEach((r: TemperatureReading) => {
+    readingsMap.set(r.reading_date, r);
   });
 
   let consecutiveFeverFreeDays = 0;

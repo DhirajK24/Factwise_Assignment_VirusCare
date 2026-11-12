@@ -67,19 +67,19 @@ export async function getAuditLogs(options?: {
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
-    const formatted = (rawData || []).map((item) => ({
+    const formatted = (rawData || []).map((item: Record<string, unknown>) => ({
       ...item,
       actor_name: "Staff",
       actor_role: null,
     }));
 
-    return { logs: formatted as AuditLog[], totalCount: rawCount || 0 };
+    return { logs: formatted as unknown as AuditLog[], totalCount: rawCount || 0 };
   }
 
-  const formatted: AuditLog[] = (data || []).map((item) => {
+  const formatted: AuditLog[] = (data || []).map((item: Record<string, unknown>) => {
     const actor = item.actor as { full_name?: string; role?: string } | null;
     return {
-      ...item,
+      ...(item as unknown as AuditLog),
       actor_name: actor?.full_name || "System",
       actor_role: (actor?.role as AuditLog["actor_role"]) || null,
     };

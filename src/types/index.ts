@@ -135,3 +135,23 @@ export interface BedStatus {
   isFever?: boolean;
 }
 
+export interface DoctorRosterItem {
+  patient: Patient;
+  todayTemp: number | null;
+  hasNurseReading: boolean;
+  isFever: boolean;
+  visit: DoctorVisit | null;
+  isVisitCompleted: boolean;
+  canRecordNormalVisit: boolean;
+}
+
+export interface DoctorRosterData {
+  targetDate: string;
+  threshold: number;
+  totalActive: number;
+  completedVisits: number;
+  pendingVisits: number;
+  patients: DoctorRosterItem[];
+}
+
+

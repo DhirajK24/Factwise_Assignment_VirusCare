@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Patient, DoctorVisit } from "@/types";
+import { Patient, DoctorVisit, DoctorRosterData } from "@/types";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -22,22 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 interface DoctorClientProps {
-  initialData: {
-    targetDate: string;
-    threshold: number;
-    totalActive: number;
-    completedVisits: number;
-    pendingVisits: number;
-    patients: Array<{
-      patient: Patient;
-      todayTemp: number | null;
-      hasNurseReading: boolean;
-      isFever: boolean;
-      visit: DoctorVisit | null;
-      isVisitCompleted: boolean;
-      canRecordNormalVisit: boolean;
-    }>;
-  };
+  initialData: DoctorRosterData;
 }
 
 export function DoctorClient({ initialData }: DoctorClientProps) {

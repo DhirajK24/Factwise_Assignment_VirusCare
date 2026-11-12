@@ -308,13 +308,13 @@ export async function getFacilityBedsMap(): Promise<{
     .eq("reading_date", todayStr);
 
   const readingMap = new Map<string, number>();
-  (todaysReadings || []).forEach((r) => {
-    readingMap.set(r.patient_id, Number(r.temperature_celsius));
+  ((todaysReadings || []) as Record<string, unknown>[]).forEach((r: Record<string, unknown>) => {
+    readingMap.set(String(r.patient_id), Number(r.temperature_celsius));
   });
 
   const patientMap = new Map<number, Patient>();
-  (activePatients || []).forEach((p) => {
-    patientMap.set(p.bed_number, p as Patient);
+  ((activePatients || []) as Patient[]).forEach((p: Patient) => {
+    patientMap.set(p.bed_number, p);
   });
 
   const beds: BedStatus[] = [];
