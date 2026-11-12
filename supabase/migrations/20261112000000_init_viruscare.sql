@@ -115,14 +115,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_profiles_modtime ON public.profiles;
 CREATE TRIGGER update_profiles_modtime
 BEFORE UPDATE ON public.profiles
 FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
+DROP TRIGGER IF EXISTS update_settings_modtime ON public.facility_settings;
 CREATE TRIGGER update_settings_modtime
 BEFORE UPDATE ON public.facility_settings
 FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
+DROP TRIGGER IF EXISTS update_patients_modtime ON public.patients;
 CREATE TRIGGER update_patients_modtime
 BEFORE UPDATE ON public.patients
 FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
@@ -168,11 +171,13 @@ ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
 -- 11. RLS Policies
 
 -- Profiles Policies
+DROP POLICY IF EXISTS "Profiles viewable by authenticated active users" ON public.profiles;
 CREATE POLICY "Profiles viewable by authenticated active users"
 ON public.profiles FOR SELECT
 TO authenticated
 USING (true);
 
+DROP POLICY IF EXISTS "Profiles insertable and updatable by admin only" ON public.profiles;
 CREATE POLICY "Profiles insertable and updatable by admin only"
 ON public.profiles FOR ALL
 TO authenticated
@@ -180,11 +185,13 @@ USING (public.is_admin())
 WITH CHECK (public.is_admin());
 
 -- Facility Settings Policies
+DROP POLICY IF EXISTS "Facility settings viewable by authenticated users" ON public.facility_settings;
 CREATE POLICY "Facility settings viewable by authenticated users"
 ON public.facility_settings FOR SELECT
 TO authenticated
 USING (true);
 
+DROP POLICY IF EXISTS "Facility settings modifiable by admin only" ON public.facility_settings;
 CREATE POLICY "Facility settings modifiable by admin only"
 ON public.facility_settings FOR ALL
 TO authenticated
@@ -192,16 +199,19 @@ USING (public.is_admin())
 WITH CHECK (public.is_admin());
 
 -- Patients Policies
+DROP POLICY IF EXISTS "Patients viewable by authenticated users" ON public.patients;
 CREATE POLICY "Patients viewable by authenticated users"
 ON public.patients FOR SELECT
 TO authenticated
 USING (true);
 
+DROP POLICY IF EXISTS "Patients manageable by admin and doctors" ON public.patients;
 CREATE POLICY "Patients manageable by admin and doctors"
 ON public.patients FOR INSERT
 TO authenticated
 WITH CHECK (public.is_admin() OR public.is_doctor());
 
+DROP POLICY IF EXISTS "Patients updatable by admin and doctors" ON public.patients;
 CREATE POLICY "Patients updatable by admin and doctors"
 ON public.patients FOR UPDATE
 TO authenticated
@@ -209,16 +219,19 @@ USING (public.is_admin() OR public.is_doctor())
 WITH CHECK (public.is_admin() OR public.is_doctor());
 
 -- Temperature Readings Policies
+DROP POLICY IF EXISTS "Temperature readings viewable by authenticated users" ON public.temperature_readings;
 CREATE POLICY "Temperature readings viewable by authenticated users"
 ON public.temperature_readings FOR SELECT
 TO authenticated
 USING (true);
 
+DROP POLICY IF EXISTS "Temperature readings insertable by nurses and admins" ON public.temperature_readings;
 CREATE POLICY "Temperature readings insertable by nurses and admins"
 ON public.temperature_readings FOR INSERT
 TO authenticated
 WITH CHECK (public.is_nurse() OR public.is_admin());
 
+DROP POLICY IF EXISTS "Temperature readings updatable with correction by nurse or admin" ON public.temperature_readings;
 CREATE POLICY "Temperature readings updatable with correction by nurse or admin"
 ON public.temperature_readings FOR UPDATE
 TO authenticated
@@ -226,11 +239,13 @@ USING (public.is_nurse() OR public.is_admin())
 WITH CHECK (public.is_nurse() OR public.is_admin());
 
 -- Doctor Visits Policies
+DROP POLICY IF EXISTS "Doctor visits viewable by authenticated users" ON public.doctor_visits;
 CREATE POLICY "Doctor visits viewable by authenticated users"
 ON public.doctor_visits FOR SELECT
 TO authenticated
 USING (true);
 
+DROP POLICY IF EXISTS "Doctor visits manageable by doctors and admin" ON public.doctor_visits;
 CREATE POLICY "Doctor visits manageable by doctors and admin"
 ON public.doctor_visits FOR ALL
 TO authenticated
@@ -238,11 +253,13 @@ USING (public.is_doctor() OR public.is_admin())
 WITH CHECK (public.is_doctor() OR public.is_admin());
 
 -- Audit Logs Policies (Read-only for users, append-only via server/functions)
+DROP POLICY IF EXISTS "Audit logs viewable by authenticated users" ON public.audit_logs;
 CREATE POLICY "Audit logs viewable by authenticated users"
 ON public.audit_logs FOR SELECT
 TO authenticated
 USING (true);
 
+DROP POLICY IF EXISTS "Audit logs insertable by authenticated users" ON public.audit_logs;
 CREATE POLICY "Audit logs insertable by authenticated users"
 ON public.audit_logs FOR INSERT
 TO authenticated

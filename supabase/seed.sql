@@ -24,14 +24,42 @@ INSERT INTO public.facility_settings (
     maximum_capacity = EXCLUDED.maximum_capacity,
     fever_threshold_celsius = EXCLUDED.fever_threshold_celsius;
 
--- 2. Fixed UUIDs for Demo Profiles
+-- 2. Fixed UUIDs for Demo Profiles & Supabase Auth Users
 -- Admin: 11111111-1111-1111-1111-111111111111
 -- Nurse 1: 22222222-2222-2222-2222-222222222222
 -- Nurse 2: 33333333-3333-3333-3333-333333333333
 -- Doctor 1: 44444444-4444-4444-4444-444444444444
 -- Doctor 2: 55555555-5555-5555-5555-555555555555
 
--- Seed profiles directly (and if Supabase Auth is enabled, matching auth.users)
+-- Ensure matching auth.users records exist in Supabase Auth to satisfy profiles_id_fkey
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'auth' AND table_name = 'users') THEN
+        INSERT INTO auth.users (
+            id,
+            instance_id,
+            aud,
+            role,
+            email,
+            encrypted_password,
+            email_confirmed_at,
+            raw_app_meta_data,
+            raw_user_meta_data,
+            created_at,
+            updated_at
+        ) VALUES 
+            ('11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'admin@viruscare.health', crypt('VirusCare2026!Secure', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"full_name":"Dr. Sarah Chen, MD","role":"admin"}', now() - interval '30 days', now()),
+            ('22222222-2222-2222-2222-222222222222', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'nurse.marcus@viruscare.health', crypt('VirusCare2026!Secure', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"full_name":"Marcus Johnson, RN","role":"nurse"}', now() - interval '30 days', now()),
+            ('33333333-3333-3333-3333-333333333333', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'nurse.elena@viruscare.health', crypt('VirusCare2026!Secure', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"full_name":"Elena Rostova, BSN","role":"nurse"}', now() - interval '30 days', now()),
+            ('44444444-4444-4444-4444-444444444444', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'doctor.arjun@viruscare.health', crypt('VirusCare2026!Secure', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"full_name":"Dr. Arjun Mehta, MD","role":"doctor"}', now() - interval '30 days', now()),
+            ('55555555-5555-5555-5555-555555555555', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'doctor.clara@viruscare.health', crypt('VirusCare2026!Secure', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"full_name":"Dr. Clara Evans, MD","role":"doctor"}', now() - interval '30 days', now())
+        ON CONFLICT (id) DO UPDATE SET
+            encrypted_password = EXCLUDED.encrypted_password,
+            raw_user_meta_data = EXCLUDED.raw_user_meta_data;
+    END IF;
+END $$;
+
+-- Seed profiles directly
 INSERT INTO public.profiles (id, full_name, email, role, is_active, created_at, updated_at)
 VALUES 
     ('11111111-1111-1111-1111-111111111111', 'Dr. Sarah Chen, MD', 'admin@viruscare.health', 'admin', true, now() - interval '30 days', now()),
